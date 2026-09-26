@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Responsive Social Infographic Studio</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div>
+      <div class="eyebrow">INFOGRAPHIC STUDIO</div>
+      <h1>Responsive Social Infographic Studio</h1>
+    </div>
+    <div class="top-actions">
+      <label class="file-button">Load JSON <input id="jsonInput" type="file" accept=".json"></label>
+      <button id="loadDemo" class="secondary">Demo Project</button>
+      <button id="presentation" class="secondary">Presentation</button>
+    </div>
+  </header>
+
+  <main class="workspace">
+    <aside class="sidebar">
+      <section class="panel">
+        <h2>Canvas</h2>
+        <div class="segmented" id="ratioControls">
+          <button data-ratio="1:1">1:1</button>
+          <button data-ratio="4:5" class="active">4:5</button>
+          <button data-ratio="9:16">9:16</button>
+        </div>
+        <div class="field-row">
+          <label>Theme
+            <select id="themeSelect">
+              <option value="modern">Modern</option>
+              <option value="corporate">Corporate</option>
+              <option value="editorial">Editorial</option>
+              <option value="minimal">Minimal</option>
+            </select>
+          </label>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-heading"><h2>Slides</h2><span id="slideCount"></span></div>
+        <div id="thumbnails" class="thumbnails"></div>
+      </section>
+
+      <section class="panel">
+        <h2>Export</h2>
+        <div class="button-stack">
+          <button id="exportCurrent" class="primary">Export Current PNG</button>
+          <button id="exportAll" class="secondary">Export All PNGs</button>
+          <button id="exportZip" class="accent">Download ZIP</button>
+        </div>
+        <div id="exportStatus" class="status" aria-live="polite"></div>
+      </section>
+    </aside>
+
+    <section class="stage">
+      <div class="stage-toolbar">
+        <button id="prev">←</button>
+        <strong id="counter">01 / 07</strong>
+        <button id="next">→</button>
+      </div>
+      <div id="preview" class="preview-stage"></div>
+      <div class="hint">Arrow keys navigate • Home/End jump • Swipe on mobile</div>
+    </section>
+  </main>
+</div>
+
+<div id="presentationLayer" class="presentation-layer" hidden>
+  <button id="closePresentation" class="presentation-close">×</button>
+  <div id="presentationCanvas"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

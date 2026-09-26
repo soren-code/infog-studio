@@ -1,0 +1,30 @@
+{
+  "name": "Responsive Social Infographic Studio",
+  "version": "1.0.0",
+  "dependencies": {
+    "html2canvas": "1.4.1",
+    "jszip": "3.10.1"
+  },
+  "formats": {
+    "1:1": [
+      1080,
+      1080
+    ],
+    "4:5": [
+      1080,
+      1350
+    ],
+    "9:16": [
+      1080,
+      1920
+    ]
+  },
+  "technology": [
+    "HTML",
+    "CSS",
+    "Vanilla JavaScript",
+    "CSS variables",
+    "aspect-ratio",
+    "Inline SVG-ready"
+  ]
+}
