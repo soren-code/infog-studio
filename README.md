@@ -71,3 +71,12 @@ For reliable PNG export, use same-origin/local images or images with appropriate
 ## Recommended production deployment
 
 For production, serve the folder over HTTPS rather than relying on `file://`, especially when using uploaded assets, fonts, or external resources.
+
+## Usage
+
+Upload a source file or image, then ask InfoG Studio to transform it into a responsive infographic or carousel.
+
+Example:
+
+> Create a 7-slide Instagram carousel from the uploaded source.
+> Use 4:5 format, add a strong hook on the first slide and a CTA on the last slide.
