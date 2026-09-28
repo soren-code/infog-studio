@@ -1,87 +1,120 @@
 ---
-name: infog-studio
-description: Production-ready skill for creating responsive social-media infographics and carousels from source content using HTML, CSS, Vanilla JavaScript, inline SVG, and responsive 1:1, 4:5, and 9:16 layouts.
+name: "infog-studio"
+description: Create responsive social-media infographics and multi-slide carousels (Instagram, LinkedIn, Facebook, Stories/Reels covers) from documents, data, images, or notes, as HTML/CSS/vanilla JS with inline SVG in 1:1, 4:5, or 9:16, with PNG, batch ZIP, and source-project export that actually saves inside Claude Artifacts. Use this skill whenever the user asks for an infographic, carousel, social-media slides, a shareable visual from content or data, or PNG/ZIP export or download of slides, and whenever an InfoG Studio artifact shows "File downloads aren't available for this artifact", even if they do not name the skill.
 ---
 
 # InfoG Studio
 
 ## Purpose
-InfoG Studio turns source material—documents, notes, spreadsheets, screenshots, images, or structured data—into polished social-media infographics and multi-slide carousels.
 
-The output must be responsive, mobile-first, editable, visually consistent, and exportable.
+InfoG Studio is a production-oriented workflow for transforming source content into polished, mobile-first social-media infographics and multi-slide carousel designs.
 
-## Supported Formats
+Prioritize:
+- Clear information hierarchy
+- Strong visual storytelling
+- Mobile readability
+- Responsive aspect ratios
+- Consistent design tokens
+- Accurate content transformation
+- Export-ready output
 
-| Ratio | Target |
-|---|---:|
-| 1:1 | 1080 × 1080 |
-| 4:5 | 1080 × 1350 |
-| 9:16 | 1080 × 1920 |
+Treat the task as a complete infographic production workflow, not ordinary HTML generation.
 
-Use CSS variables and `aspect-ratio` rather than separate hard-coded layouts.
+## 1. Supported Formats
+
+Support:
+
+| Ratio | Target size | Typical use |
+|---|---:|---|
+| 1:1 | 1080 × 1080 | Square social post |
+| 4:5 | 1080 × 1350 | Portrait feed post |
+| 9:16 | 1080 × 1920 | Story / vertical post |
+
+Use CSS variables and `aspect-ratio`. Do not create three unrelated hard-coded layouts.
 
 ```css
 :root {
   --canvas-ratio: 1 / 1;
-  --canvas-width: 1080;
-  --canvas-height: 1080;
 }
-.canvas {
-  width: 100%;
+.infographic-canvas {
   aspect-ratio: var(--canvas-ratio);
+  width: 100%;
 }
 ```
 
-## Core Workflow
+Changing the ratio must preserve content hierarchy while adapting spacing, typography, charts, and layout.
 
-1. Analyze the source and identify the main topic, audience, key facts, numbers, steps, examples, comparisons, and visual opportunities.
-2. Compress the source into concise social-friendly copy without changing factual meaning.
-3. Build a clear content hierarchy.
-4. Create a hook for the opening slide.
-5. Create educational middle slides.
-6. Create a CTA for the final slide.
-7. Apply the selected ratio and responsive design system.
-8. Add slide numbering.
-9. Add inline SVG visualizations where useful.
-10. Validate overflow and export behavior.
+## 2. Input Handling
 
-## Carousel Structure
+Accept:
+- Uploaded source files
+- Uploaded images
+- User-provided text
+- Structured data
+- PDF/document content when available
+- Existing HTML/CSS/JS projects
 
-Default carousel structure:
+First extract:
+1. Main topic
+2. Audience
+3. Key facts
+4. Important numbers
+5. Headline ideas
+6. Supporting points
+7. Examples
+8. Steps/workflow
+9. CTA opportunities
+10. Visual/chart opportunities
 
-```text
-01 — Hook
-02 — Problem / Context
-03 — Core Concept
-04 — Example / Data
-05 — How-To / Steps
-06 — Key Takeaway
-07 — CTA
-```
+Do not invent factual information not present in the source unless explicitly requested.
 
-Adapt the number of slides to the source instead of forcing unnecessary slides.
+## 3. Content Compression
 
-## Hook Rules
+Convert source material into concise infographic-friendly content.
 
-The hook should:
-- Grab attention in 1–2 lines.
-- Start with a relatable problem, question, mistake, or desired outcome.
-- Make the audience recognize the situation immediately.
-- Reflect the actual subject.
+Prefer:
+- Short headlines
+- 1–2 sentence explanations
+- Bullets
+- Numbered steps
+- Data callouts
+- Comparisons
+- Before/After structures
+- Charts
+- Diagrams
+- Icon-supported explanations
 
-## CTA Rules
+Avoid dense paragraphs, tiny typography, unnecessary repetition, and decorative clutter.
 
-The final slide should summarize the value and provide one clear action such as:
-- Save this
-- Share this
-- Follow for more
-- Try it yourself
-- Comment with a question
-- Bookmark for later
+Each slide should communicate one primary idea.
 
-## Slide Numbering
+## 4. Carousel Structure
 
-Use automatic numbering such as:
+Unless the user specifies another structure:
+
+### Slide 1 — HOOK / COVER
+Include a topic/category label, attention-grabbing hook, main title, short supporting line, and a strong visual/callout.
+
+The hook should normally address a relatable problem, create curiosity, and communicate a benefit without being misleading.
+
+### Middle Slides — CONTENT
+Use logical educational progression such as:
+- Problem → Solution
+- Before → After
+- Step-by-step
+- Concept → Example
+- Data → Chart
+- Mistake → Fix
+- Comparison
+- Checklist
+- Framework
+
+### Final Slide — CTA
+End with a clear action such as save, share, follow, try, or comment. Include a short recap when useful.
+
+## 5. Slide Numbering
+
+Every carousel slide should automatically display numbering, for example:
 
 ```text
 01 / 07
@@ -90,358 +123,361 @@ Use automatic numbering such as:
 07 / 07
 ```
 
-```js
-function slideNumber(index, total) {
-  return `${String(index + 1).padStart(2, "0")} / ${String(total).padStart(2, "0")}`;
-}
-```
+Update numbering automatically when slides are added or removed.
 
-## Design System
+## 6. Visual Design System
 
-Use CSS custom properties for colors, spacing, typography, radii, and shadows.
+Use reusable CSS design tokens:
 
 ```css
 :root {
-  --bg: #0b1020;
-  --surface: #141b2d;
-  --text: #f7f9fc;
-  --muted: #aab4c5;
-  --primary: #7c5cff;
-  --secondary: #36d6ae;
-  --accent: #ff9d5c;
-  --radius-md: 20px;
-  --space-1: 8px;
-  --space-2: 16px;
-  --space-3: 24px;
-  --space-4: 32px;
-  --space-5: 48px;
+  --color-bg: #0e1623;
+  --color-surface: #141e2e;
+  --color-text: #f4f7fb;
+  --color-muted: #aeb9c9;
+  --color-accent: #29d17f;
+  --radius-md: 16px;
+  --radius-lg: 24px;
 }
 ```
 
-Do not scatter arbitrary design values throughout the code.
-
-## Typography
-
-Maintain a clear hierarchy:
-- Display headline
-- Section headline
-- Supporting headline
-- Body
-- Caption
-- Metadata / slide number
-
-Use responsive sizing such as:
-
-```css
-.headline {
-  font-size: clamp(2rem, 6cqw, 5rem);
-  line-height: 0.98;
-}
-```
-
-Avoid tiny text and excessive copy.
-
-## Layout
-
-Use:
-- CSS Grid
-- Flexbox
-- `aspect-ratio`
-- `clamp()`
-- Relative units
-- Container queries where useful
-- Safe-area padding
-
-Avoid absolute positioning as the primary layout system.
-
-Every slide must remain usable at 1:1, 4:5, and 9:16.
-
-## Inline SVG
-
-Use inline SVG for charts, diagrams, arrows, icons, flow diagrams, simple illustrations, and data visualizations.
-
-```html
-<svg viewBox="0 0 600 300" role="img" aria-label="Sales trend">
-  <path d="..." fill="none" stroke="currentColor" stroke-width="8"/>
-</svg>
-```
-
-Keep SVG responsive:
-
-```css
-.chart svg {
-  width: 100%;
-  height: auto;
-  display: block;
-}
-```
-
-Charts must communicate an actual insight rather than being decorative.
-
-## Data Visualization
-
-When source data is available:
-- Select the simplest suitable chart.
-- Label important values.
-- Keep units consistent.
-- Avoid misleading scaling.
-- Highlight the key insight.
-- Prefer horizontal bars when category labels are long.
-- Use inline SVG for final charts.
-
-## Themes
-
-Support theme switching through CSS variables. Recommended themes:
+Support themes such as:
 - Modern
 - Corporate
 - Editorial
 - Minimal
 
-Themes should change design tokens rather than duplicate entire stylesheets.
+Change themes through tokens instead of duplicating layouts.
 
-## Application UI
+## 7. Typography
 
-A browser editor should provide:
-- Ratio selector
-- Theme selector
-- Slide navigation
-- Thumbnail preview
-- Current slide preview
-- Previous/next controls
-- Export current PNG
-- Export all PNGs
-- Download project ZIP
-- JSON project loading
-- Presentation mode
-- Keyboard navigation
-- Export progress/status
+Use professional sans-serif typography. Prioritize headline, supporting text, data/callout, body copy, and metadata.
 
-## Keyboard Controls
+Use responsive sizing such as:
 
-Support:
-- `ArrowLeft` — previous slide
-- `ArrowRight` — next slide
-- `Home` — first slide
-- `End` — last slide
-- `P` — presentation mode
-- `Escape` — exit presentation mode
-
-Do not override keyboard input while typing in form fields.
-
-## Presentation Mode
-
-Presentation mode should hide editor controls, expand the active canvas, support keyboard navigation, preserve the selected ratio, and exit with `Escape`.
-
-## PNG Export
-
-Use `html2canvas` for browser PNG rendering.
-
-Recommended dependency:
-
-```html
-<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+```css
+font-size: clamp(...);
 ```
 
-For production/offline use, vendor dependencies locally.
+Use `clamp()` for page chrome (controls, preview layout). Inside a slide, size type in `cqw` with no px floors so the preview and the exported PNG match (section 14).
+
+Keep text readable on mobile.
+
+## 8. Responsive Layout
+
+Use mobile-first:
+- CSS Grid
+- Flexbox
+- `aspect-ratio`
+- CSS variables
+- `clamp()`
+- Container queries where useful
+- Relative spacing
+- Safe margins
+
+The same content must adapt between 1:1, 4:5, and 9:16 without clipping or overlapping.
+
+## 9. Reusable Components
+
+Build reusable components for:
+- Headers and footers
+- Slide numbers
+- Cards
+- Callouts
+- Badges
+- Steps
+- Timelines
+- Comparisons
+- Before/After panels
+- Tables
+- Charts
+- Diagrams
+- Icons
+- CTA blocks
+
+Keep styling consistent throughout the carousel.
+
+## 10. Inline SVG
+
+Use inline SVG for charts, diagrams, icons, arrows, and data visualization.
+
+SVG should be responsive, scalable, lightweight, and consistent with design tokens.
+
+```html
+<svg viewBox="0 0 400 220" role="img" aria-label="Sales chart">
+  ...
+</svg>
+```
+
+Do not use SVG when simple HTML/CSS is more appropriate.
+
+## 11. Charts and Data
+
+Use the simplest chart that communicates the source data:
+- Horizontal bar
+- Vertical bar
+- Line
+- Donut
+- Progress
+- Timeline
+- Comparison
+
+For mobile layouts, prioritize clear labels and adequate spacing.
+
+Never fabricate data. If source data is insufficient, request it or clearly label an illustrative example when the user permits one.
+
+## 12. Before / After Layout
+
+For transformation content, use a two-panel layout:
+
+```text
+BEFORE  →  AFTER
+Raw data   Result
+```
+
+Use clear labels, connector arrows, consistent cards, and mobile-safe spacing.
+
+For Excel content, use compact spreadsheet mock-ups when useful.
+
+## 13. Excel/Data Visualization
+
+When appropriate, use:
+- Thin gridlines
+- Header row
+- Alternating rows
+- One highlighted cell/column
+- Rounded container
+- Subtle shadow
+- Optional cell references such as A1, B1
+
+For transformations, show raw data → resulting chart. If a horizontal bar chart is requested, do not substitute a vertical bar chart.
+
+## 14. Export System
+
+**The root cause to design around.** A published Claude Artifact runs in a sandboxed frame where `<a download>`, blob-URL clicks, FileSaver, and `saveAs` silently do nothing; the host reports "File downloads aren't available for this artifact." Saving a file there is a runtime capability, and it exists only if the page **declares it when published**. Both halves are required, and fixing button code alone never works:
+
+1. **Declare it.** Call the `Artifact` tool with `action: "capabilities"` first (required before using any capability), then publish with `capabilities: {"downloads": true}`.
+2. **Use it.** Paste `assets/export-runtime.js` from this skill, verbatim, into the page and call it from the buttons. Do not hand-write download code; the runtime already handles the capability, fallbacks, batch ZIPs, and honest status wording.
+
+Read `references/export-and-publishing.md` before building, publishing, or repairing any export feature. It holds the publish steps, environment matrix, error-code behaviour, and a troubleshooting table. To repair an artifact built with the old skill, follow its section 3.
+
+### Page contract
+
+- Blocks: `<style id="infog-styles">`, then `<script id="infog-export">` (the runtime), then `<script id="infog-app">`.
+- Each slide's canvas carries `data-infog-canvas`. Hide inactive slides with a wrapper (`hidden` on the parent), never on the canvas itself.
+- Theme and ratio tokens live on `<html>` (`data-ratio="1:1|4:5|9:16"`, `data-theme`, variables on `:root`). Slide styles use plain class selectors that need no preview ancestor.
+- `.infographic-canvas` sets `container-type: inline-size`, and everything inside a slide is sized in `cqw` with no px floors, so the 360px preview and the 1080px PNG match.
+- Images are `data:` URIs. Containers the app renders into carry `data-infog-dynamic`; add one `<div data-infog-status>` for results and errors.
+
+These exist because the export renders an off-screen clone of the canvas at the exact target size; the reference explains each one.
+
+### Wiring
 
 ```js
-const canvas = await html2canvas(slideElement, {
-  backgroundColor: null,
-  scale: 2,
-  useCORS: true
+const exporter = InfoGExport.create({
+  name: project.name,
+  getActiveIndex: () => state.index,
+  getProject: () => project            // optional: adds project.json to the source ZIP
 });
+pngBtn.onclick = () => exporter.exportCurrentPNG();
+zipBtn.onclick = () => exporter.exportAllZip();
+srcBtn.onclick = () => exporter.exportProjectZip();
 ```
 
-The final export dimensions must correspond to the selected target ratio, not the browser viewport.
+Target size comes from `data-ratio`: 1080 × 1080, 1080 × 1350, 1080 × 1920. Output is exact pixels regardless of screen density.
 
-## Batch Export
+### What the runtime guarantees (do not undo it)
 
-Export deterministic filenames:
+Save order: downloads capability, then Web Share with a File (touch devices only), then `<a download>` (top-level pages only), then an on-page Save panel with preview, Download, Open, Share, and Copy image. The user is never left without a way to get the file.
 
-```text
-slide-01.png
-slide-02.png
-slide-03.png
-```
+- A declined save reads "Save cancelled." and is not retried.
+- Report success only when the capability said `saved` or the share resolved. Anchor and panel paths say "Download requested" or "Ready", never "downloaded".
+- Only one save prompt can be open at a time, so exports never loop per-slide saves; see section 15.
 
-Wait for fonts and images before rendering and show progress such as `Exporting 3 / 7...`.
+## 15. Batch PNG Export
 
-## ZIP Export
+"Export all" produces one ZIP containing `slide-01.png`, `slide-02.png`, `slide-03.png`, and so on (wider padding past 99 slides), saved with a single prompt. Progress reads `Exporting 3 / 7...` and then `Packing ZIP...`. Per-slide saving in a loop is a bug: each save needs viewer confirmation, so the second one is rate limited.
 
-Use `JSZip`.
+## 16. ZIP Export
 
-Recommended dependency:
+Offer two ZIPs, both produced by the runtime:
 
-```html
-<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
-```
+- **Slides ZIP** (`exportAllZip`): `<slug>-slides.zip` with the PNGs above.
+- **Source ZIP** (`exportProjectZip`): `<slug>-project.zip`, a runnable project rebuilt from the page: `index.html`, `styles.css`, `script.js`, `manifest.json`, `README.md`, `.gitignore`, `assets/`, plus `project.json` when `getProject` is supplied. There are never placeholder files, so keep the `infog-styles` and `infog-app` blocks accurate; they become `styles.css` and `script.js`.
 
-The ZIP must contain real, usable source files—not placeholders.
+When delivering the repository as files (bash plus `present_files`) instead of from the page, use the full tree: `SKILL.md`, `README.md`, `LICENSE`, `.gitignore`, `manifest.json`, `index.html`, `styles.css`, `script.js`, `assets/`. A published page cannot see `SKILL.md` or `LICENSE`, so they appear only in the file deliverable. The ZIP must be reconstructable and runnable from what it contains.
 
-Recommended structure:
+## 17. Dependency Strategy
 
-```text
-infog-studio/
-├── SKILL.md
-├── README.md
-├── manifest.json
-├── index.html
-├── styles.css
-├── script.js
-└── assets/
-    ├── fonts/
-    ├── images/
-    └── vendor/
-```
+Published pages may load scripts only from `cdnjs.cloudflare.com`, `cdn.jsdelivr.net/npm/`, `cdn.tailwindcss.com`, and `code.jquery.com`. Other hosts (unpkg, esm.sh) are blocked and fail silently, and remote images are blocked too. The runtime lazily loads html2canvas 1.4.1 and JSZip 3.10.1 from cdnjs with jsDelivr as fallback, so do not add your own script tags for them, and keep versions pinned.
 
-## JSON Projects
+For fully offline projects, vendor both files under `assets/vendor/` and document the strategy in `README.md` (the source ZIP's README already does).
 
-Support loading and saving structured projects.
+## 18. Preview System
+
+Provide:
+- Main slide preview
+- Slide thumbnails
+- Previous/Next navigation
+- Active slide indicator
+- Slide count
+- Presentation mode when useful
+
+Keyboard support:
+- `ArrowLeft` → previous
+- `ArrowRight` → next
+- `Home` → first
+- `End` → last
+- `P` → presentation mode
+- `Escape` → exit presentation mode
+
+Keep controls touch-friendly.
+
+## 19. JSON Project Loading
+
+Support structured project data when useful:
 
 ```json
 {
   "name": "My Infographic",
-  "ratio": "4:5",
+  "ratio": "square",
   "theme": "modern",
-  "slides": [
-    {
-      "type": "hook",
-      "title": "Your headline",
-      "body": "Supporting copy"
-    },
-    {
-      "type": "content",
-      "title": "Key concept",
-      "body": "Explanation"
-    },
-    {
-      "type": "cta",
-      "title": "Save this guide",
-      "body": "Follow for more"
-    }
-  ]
+  "slides": []
 }
 ```
 
-Validate imported JSON and handle malformed files gracefully.
+Validate imported JSON and handle malformed input without crashing.
 
-## Accessibility
+## 20. Quality Assurance
 
-Use semantic HTML, meaningful SVG `aria-label`s, adequate contrast, keyboard navigation, visible focus states, and alternative text for meaningful images. Mark decorative SVGs with `aria-hidden="true"`.
+Before finalizing, check:
 
-## QA
+### Content
+- No missing text
+- No accidental duplication
+- No fabricated facts
+- Correct spelling
+- Correct numbers
 
-Before export check:
-- Canvas and ratio exist.
-- Slide count and numbering are correct.
-- Hook and CTA exist for carousel projects.
-- No horizontal or vertical overflow.
-- No clipped or overlapping text.
-- Charts fit.
-- Images and fonts load.
-- Footer and slide numbers remain visible.
-- CTA remains visible.
-- Minimum readable font size is maintained.
-- PNG dimensions are correct.
-- Editor controls are not captured.
+### Layout
+- No overflow
+- No clipping
+- No overlapping elements
+- Safe margins
+- Clear hierarchy
 
-## Source Analysis
+### Responsive
+Test:
+- 1:1
+- 4:5
+- 9:16
 
-When source files are supplied:
-1. Extract the content.
-2. Identify the core educational message.
-3. Remove repetition.
-4. Convert long explanations into concise slide copy.
-5. Identify data suitable for visualization.
-6. Create logical slide progression.
-7. Produce a hook.
-8. Produce a CTA.
-9. Preserve factual meaning.
-10. Never fabricate missing information.
+### Export
+Verify:
+- The publish call declares `capabilities: {"downloads": true}`, and the page contains the unmodified runtime with no hand-written download code
+- PNG generation and target dimensions (1080 wide; height by ratio)
+- Slide numbering and filenames (`slide-01.png` ...)
+- Batch export makes one ZIP and one save prompt
+- Save panel appears when the capability is missing
+- After editing `assets/export-runtime.js`, run `scripts/test-export-runtime.cjs`; after touching rendering, run `scripts/e2e-browser-check.cjs` (run instructions are in each file's header)
 
-## Content Density
+### Visual
+Check:
+- Contrast
+- Alignment
+- Spacing
+- Typography
+- Chart readability
+- Icon consistency
 
-A slide should communicate one primary idea.
+## 21. Accessibility
 
-Prefer:
+Where practical:
+- Use semantic HTML
+- Add useful `aria-label` values to meaningful SVG graphics
+- Maintain sufficient contrast
+- Do not communicate important information through color alone
+- Use clear button labels
+- Keep controls keyboard accessible
 
-```text
-1 strong headline
-1 short explanation
-1 visual
-1 supporting callout
-```
+## 22. Performance
 
-If content is too dense, create additional slides instead of shrinking typography excessively.
+Prefer lightweight CSS, inline SVG, minimal JavaScript, reusable components, lazy thumbnail rendering, and selective re-rendering.
 
-## Component Architecture
+Avoid unnecessarily large raster assets, excessive DOM nesting, and repeated expensive canvas renders.
 
-Prefer reusable components:
+## 23. Error Handling
 
-```text
-App
-├── Toolbar
-├── RatioSelector
-├── ThemeSelector
-├── SlideNavigator
-├── ThumbnailRail
-├── SlideCanvas
-│   ├── HookSlide
-│   ├── ContentSlide
-│   ├── ChartSlide
-│   ├── StepsSlide
-│   └── CTASlide
-└── ExportManager
-```
-
-Keep rendering logic separate from export logic where practical.
-
-## Dependency Policy
-
-Recommended stack:
-- HTML5
-- CSS3
-- Vanilla JavaScript
-- Inline SVG
-- html2canvas
-- JSZip
-
-Avoid unnecessary frameworks or build systems unless explicitly requested.
-
-## Error Handling
-
-Errors must be clear and actionable. Never silently fail.
+Errors must be visible and actionable.
 
 Examples:
 
 ```text
-Unable to export this slide. Check that all images have loaded and try again.
+PNG export failed. Try again after the slide finishes rendering.
 ```
 
 ```text
-The project JSON is invalid. Please verify the file format.
+ZIP export failed. Check dependency/network access and try again.
 ```
 
-## Naming
+```text
+Invalid project JSON.
+```
 
-Technical short name:
+Show messages in the `[data-infog-status]` region (the runtime does this). Do not silently fail and do not report successful download when only a Blob URL was created.
+
+## 24. Naming
+
+Use:
 
 ```text
 infog-studio
 ```
 
-User-facing name:
+for repository/package naming.
+
+Use:
 
 ```text
 InfoG Studio
 ```
 
-Recommended title:
+as the human-readable product name.
+
+Recommended project files:
 
 ```text
-InfoG Studio — Responsive Social Infographic Builder
+SKILL.md
+README.md
+LICENSE
+.gitignore
+manifest.json
+index.html
+styles.css
+script.js
 ```
 
-## Final Output Expectations
+## 25. Output Expectations
 
-When creating an InfoG Studio project, produce a responsive, editable, production-oriented result. Use the selected ratio system, inline SVG where appropriate, automatic slide numbering, hook/CTA structure, preview/navigation, PNG export, and ZIP packaging when requested. Ensure packaged files contain complete working source code rather than placeholders.
+When creating an infographic:
+1. Understand the source.
+2. Build the content hierarchy.
+3. Select a slide structure.
+4. Generate the visual design.
+5. Apply the selected ratio.
+6. Validate the layout.
+7. Produce export-ready HTML/CSS/JS.
+8. Provide PNG/ZIP export when requested, using the runtime in `assets/export-runtime.js`.
+9. Publish with `capabilities: {"downloads": true}` (see section 14); for a page the user wants as a file, present the file instead.
+
+When creating a complete project, deliver a runnable project rather than only a code fragment.
+
+When creating a Claude Skill, provide a complete `SKILL.md` following this specification.
+
+## Core Principle
+
+InfoG Studio should behave like a **production infographic design system**, not merely a code generator.
+
+Balance:
+
+**Content clarity + Visual hierarchy + Responsive layout + Export reliability + Mobile usability.**
